@@ -1,0 +1,46 @@
+package com.albydaa.equinefarm.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Entity
+@Table(name = "doctors")
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Doctor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
+    private Double salary;
+    private Specialization specialization;
+    @OneToMany(mappedBy = "doctorInCharge",cascade = {CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.LAZY)
+    @Column(name = "managed_horses")
+    @JsonIgnore
+    private List<Horse> managedHorses = new ArrayList<>();
+
+    public void addHorse(Horse horse){
+        managedHorses.add(horse);
+    }
+
+    public enum Specialization{
+        SURGEON,
+        ANESTHESIOLOGIST,
+        TECHNICIAN,
+        GENERAL
+    }
+
+}
