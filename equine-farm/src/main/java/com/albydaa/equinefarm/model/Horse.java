@@ -2,6 +2,7 @@ package com.albydaa.equinefarm.model;
 
 import com.albydaa.equinefarm.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,13 +26,15 @@ public class Horse extends BaseEntity {
     private String name;
     private String breed;
     private Double price;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Horse parent;
     @OneToMany(mappedBy = "parent")
     @JsonIgnore
     private List<Horse> children = new ArrayList<>();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_in_charge")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Doctor doctorInCharge;
 
     public void addChild(Horse horse){

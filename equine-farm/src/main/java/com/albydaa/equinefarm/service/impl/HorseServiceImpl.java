@@ -14,21 +14,30 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseService {
-    private final HorseRepo repo;
+    private final HorseRepo horseRepo;
     private final DoctorService doctorService;
     @Override
-    public Horse giveResponsibilityToDoctor(long doctorId, long horseId) {
-        Optional<Horse> optionalHorse = repo.findById(horseId);
-        Optional<Doctor> optionalDoctor = doctorService.findObjectById(doctorId);
+    public Horse findObjectById(long id){
+        Optional<Horse> optionalHorse = horseRepo.findById(id);
         if(optionalHorse.isEmpty()){
-           return null; // change it and do something when adding exception handling.
-        }else if(optionalDoctor.isEmpty()){
-            return null; // change it and do something when adding exception handling.
+            return null; // handle later when adding exception handling
         }
         Horse horse = optionalHorse.get();
-        Doctor doctor = optionalDoctor.get();
+        if(horse.getDoctorInCharge() != null){
+            horse.setDoctorInCharge(doctorService.findObjectById(horse.getDoctorInCharge().getId())); // handle if doctor is null
+        }
+        if(horse.getParent() != null){
+            horse.getParent().setDoctorInCharge(null);
+            horse.getParent().setParent(null);
+        }
+        return horse;
+    }
+    @Override
+    public Horse giveResponsibilityToDoctor(long doctorId, long horseId) {
+        Horse horse = findObjectById(horseId);
+        Doctor doctor = doctorService.findObjectById(doctorId);
         horse.setDoctorInCharge(doctor);
-        repo.save(horse);
+        saveObject(horse);
         doctor.addHorse(horse);
         doctorService.saveObject(doctor);
         return horse;
@@ -36,21 +45,15 @@ public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseSer
 
     @Override
     public Horse addParentToHorse(long childId, long parentId) {
-        Optional<Horse> optionalChild = repo.findById(childId);
-        Optional<Horse> optionalParent = repo.findById(parentId);
-        if(optionalChild.isEmpty()){
-            return null; // change it and do something when adding exception handling.
-        }else if (optionalParent.isEmpty()){
-            return null; // change it and do something when adding exception handling.
-        }else if(childId == parentId){
+        Horse child = horseRepo.findById(childId).get();
+        Horse parent = horseRepo.findById(parentId).get();
+        if(childId == parentId){
             return null; // change it and do something when adding exception handling.
         }
-        Horse child = optionalChild.get();
-        Horse parent = optionalParent.get();
         child.setParent(parent);
         parent.addChild(child);
-        repo.save(parent);
-        repo.save(child);
+        saveObject(parent);
+        saveObject(child);
         return child;
     }
 }

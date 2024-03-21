@@ -14,7 +14,7 @@ import java.util.Optional;
 public class DoctorController {
     private final DoctorService doctorService;
     @GetMapping("/{id}")
-    public Optional<Doctor> getDoctorWithId(@PathVariable long id){
+    public Doctor getDoctorWithId(@PathVariable long id){
         return doctorService.findObjectById(id);
     }
     @GetMapping

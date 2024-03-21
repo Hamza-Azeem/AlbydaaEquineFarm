@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BaseService<T> {
-    public Optional<T> findObjectById(long id);
+    public T findObjectById(long id);
 
     public List<T> findAllObjects();
 

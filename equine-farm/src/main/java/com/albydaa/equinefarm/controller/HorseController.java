@@ -16,7 +16,7 @@ public class HorseController {
 
     // basic get insert update delete methods
     @GetMapping("/{id}")
-    public Optional<Horse> getHorseWithId(@PathVariable long id){
+    public Horse getHorseWithId(@PathVariable long id){
         return horseService.findObjectById(id);
     }
     @GetMapping

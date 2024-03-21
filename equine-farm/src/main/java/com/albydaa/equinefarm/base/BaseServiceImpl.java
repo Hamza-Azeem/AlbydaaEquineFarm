@@ -13,8 +13,12 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     private BaseRepo<T> baseRepo;
 
     @Override
-    public Optional<T> findObjectById(long id) {
-        return baseRepo.findById(id);
+    public T findObjectById(long id) {
+        Optional<T> optionalT = baseRepo.findById(id);
+        if(optionalT.isEmpty()){
+            return null; // Handle it when adding exception handling
+        }
+        return optionalT.get();
     }
 
     @Override
