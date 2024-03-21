@@ -17,23 +17,23 @@ public class HorseController {
     // basic get insert update delete methods
     @GetMapping("/{id}")
     public Optional<Horse> getHorseWithId(@PathVariable long id){
-        return horseService.findHorseById(id);
+        return horseService.findObjectById(id);
     }
     @GetMapping
     public List<Horse> getAllHorses(){
-        return horseService.findAllHorses();
+        return horseService.findAllObjects();
     }
     @PostMapping
     public Horse createhorse(@RequestBody Horse horse){
-        return horseService.addHorse(horse);
+        return horseService.saveObject(horse);
     }
     @PutMapping
     public Horse updatehorse(@RequestBody Horse horse){
-        return horseService.updateExistingHorse(horse);
+        return horseService.saveObject(horse);
     }
     @DeleteMapping("/{id}")
     public void deleteHorseWithId(@PathVariable long id){
-        horseService.deleteHorseById(id);
+        horseService.deleteObjectById(id);
     }
     // ***************************************************************************************
     // customized methods
