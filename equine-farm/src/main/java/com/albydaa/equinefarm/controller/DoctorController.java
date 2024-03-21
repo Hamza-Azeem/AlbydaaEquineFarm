@@ -15,22 +15,22 @@ public class DoctorController {
     private final DoctorService doctorService;
     @GetMapping("/{id}")
     public Optional<Doctor> getDoctorWithId(@PathVariable long id){
-        return doctorService.findDoctorById(id);
+        return doctorService.findObjectById(id);
     }
     @GetMapping
     public List<Doctor> getAllDoctors(){
-        return doctorService.findAllDoctors();
+        return doctorService.findAllObjects();
     }
     @PostMapping
     public Doctor createDoctor(@RequestBody Doctor doctor){
-        return doctorService.saveDoctor(doctor);
+        return doctorService.saveObject(doctor);
     }
     @PutMapping
     public Doctor updateDoctor(@RequestBody Doctor doctor){
-        return doctorService.saveDoctor(doctor);
+        return doctorService.saveObject(doctor);
     }
     @DeleteMapping("/{id}")
     public void deleteDoctorWithId(@PathVariable long id){
-        doctorService.deleteDoctorById(id);
+        doctorService.deleteObjectById(id);
     }
 }
