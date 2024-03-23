@@ -1,12 +1,13 @@
 package com.albydaa.equinefarm.controller;
 
+import com.albydaa.equinefarm.dtos.HorseDTO;
 import com.albydaa.equinefarm.model.Horse;
 import com.albydaa.equinefarm.service.HorseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/v1/horse")
@@ -16,20 +17,20 @@ public class HorseController {
 
     // basic get insert update delete methods
     @GetMapping("/{id}")
-    public Horse getHorseWithId(@PathVariable long id){
-        return horseService.findObjectById(id);
+    public HorseDTO getHorseWithId(@PathVariable long id){
+        return horseService.findHorseById(id);
     }
     @GetMapping
-    public List<Horse> getAllHorses(){
-        return horseService.findAllObjects();
+    public List<HorseDTO> getAllHorses(){
+        return horseService.findAllHorses();
     }
     @PostMapping
-    public Horse createhorse(@RequestBody Horse horse){
-        return horseService.saveObject(horse);
+    public HorseDTO createHorse(@RequestBody HorseDTO horseDTO){
+        return horseService.saveHorse(horseDTO);
     }
     @PutMapping
-    public Horse updatehorse(@RequestBody Horse horse){
-        return horseService.saveObject(horse);
+    public HorseDTO updateHorse(@RequestBody HorseDTO horseDTO){
+        return horseService.saveHorse(horseDTO);
     }
     @DeleteMapping("/{id}")
     public void deleteHorseWithId(@PathVariable long id){
@@ -38,14 +39,19 @@ public class HorseController {
     // ***************************************************************************************
     // customized methods
     @PostMapping("/add-parent")
-    public Horse addParentToChildHorse(@RequestParam("childId") long childId,
+    public HorseDTO addParentToChildHorse(@RequestParam("childId") long childId,
                                        @RequestParam("parentId") long parentId){
         return horseService.addParentToHorse(childId, parentId);
     }
     @PostMapping("/add-doctor-responsible")
-    public Horse addDoctorInChargeToHorse(@RequestParam("doctorId") long doctorId,
-                                          @RequestParam("horseId") long horseId){
+    public HorseDTO addDoctorInChargeToHorse(@RequestParam("doctorId") long doctorId,
+                                             @RequestParam("horseId") long horseId){
         return horseService.giveResponsibilityToDoctor(doctorId, horseId);
     }
+    @GetMapping("/{id}/children")
+    public List<HorseDTO> getChildrenOfHorse(@PathVariable long id){
+        return horseService.findChildrenOfHorse(id);
+    }
+
 
 }
