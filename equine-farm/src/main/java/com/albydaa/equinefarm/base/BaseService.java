@@ -1,7 +1,6 @@
 package com.albydaa.equinefarm.base;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BaseService<T> {
     public T findObjectById(long id);

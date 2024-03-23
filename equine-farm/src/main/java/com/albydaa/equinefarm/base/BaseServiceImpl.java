@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @MappedSuperclass
-public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
+public class BaseServiceImpl<T> implements BaseService<T> {
     @Autowired
     private BaseRepo<T> baseRepo;
 

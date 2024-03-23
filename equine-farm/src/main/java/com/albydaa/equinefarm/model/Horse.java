@@ -26,6 +26,7 @@ public class Horse extends BaseEntity {
     private String name;
     private String breed;
     private Double price;
+    private Integer age;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Horse parent;
