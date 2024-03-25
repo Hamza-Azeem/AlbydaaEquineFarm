@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+
 import java.util.Set;
 
 @Entity
@@ -27,18 +25,35 @@ public class Horse extends BaseEntity {
     private String breed;
     private Double price;
     private Integer age;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Horse parent;
-    @OneToMany(mappedBy = "parent")
-    @JsonIgnore
-    private List<Horse> children = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "child_parent",
+    joinColumns = @JoinColumn(name = "child_id"),
+            inverseJoinColumns = @JoinColumn(name = "parent_id")
+    )
+    private Set<Horse> children;
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "child_parent",
+            joinColumns = @JoinColumn(name = "parent_id"),
+            inverseJoinColumns = @JoinColumn(name = "child_id")
+    )
+    private Set<Horse> parents;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_in_charge")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Doctor doctorInCharge;
 
     public void addChild(Horse horse){
+        if(children == null)
+            children = new HashSet<>();
         children.add(horse);
+    }
+    public void addParent(Horse horse){
+        if(parents == null)
+            parents = new HashSet<>();
+        if(parents.size() == 2)
+            return; // handle
+        parents.add(horse);
     }
 }

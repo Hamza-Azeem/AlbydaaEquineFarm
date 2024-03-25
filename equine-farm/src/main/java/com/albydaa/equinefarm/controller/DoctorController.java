@@ -2,14 +2,12 @@ package com.albydaa.equinefarm.controller;
 
 import com.albydaa.equinefarm.dtos.DoctorDTO;
 import com.albydaa.equinefarm.dtos.HorseDTO;
-import com.albydaa.equinefarm.model.Doctor;
 import com.albydaa.equinefarm.model.Doctor.Specialization;
 import com.albydaa.equinefarm.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/doctor")

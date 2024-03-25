@@ -17,7 +17,5 @@ public class HorseDTO {
     private String breed;
     private Double price;
     private Integer age;
-    private HorseDTO parent;
-    private List<HorseDTO> children = new ArrayList<>();
-    private DoctorDTO doctorInCharge;
+    
 }

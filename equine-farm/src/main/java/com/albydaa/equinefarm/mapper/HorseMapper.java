@@ -28,10 +28,6 @@ public class HorseMapper {
                 .breed(horse.getBreed())
                 .age(horse.getAge())
                 .price(horse.getPrice())
-//                .doctorInCharge(horse.getDoctorInCharge()!= null ? mapToDoctorDTO(horse.getDoctorInCharge()): null)
-//                .children(horse.getChildren() != null ? horse.getChildren().stream()
-//                        .map(horse1 -> mapToHorseDTO(horse1)).collect(Collectors.toList()) :null)
-//                .parent(horse.getParent()!= null ? mapToHorseDTO(horse.getParent()): null)
                 .name(horse.getName())
                 .build();
         return horseDTO;
