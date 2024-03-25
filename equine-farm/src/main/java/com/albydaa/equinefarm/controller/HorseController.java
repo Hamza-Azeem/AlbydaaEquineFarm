@@ -1,5 +1,6 @@
 package com.albydaa.equinefarm.controller;
 
+import com.albydaa.equinefarm.dtos.DoctorDTO;
 import com.albydaa.equinefarm.dtos.HorseDTO;
 import com.albydaa.equinefarm.model.Horse;
 import com.albydaa.equinefarm.service.HorseService;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 
 @RestController
@@ -30,7 +32,7 @@ public class HorseController {
     }
     @PutMapping
     public HorseDTO updateHorse(@RequestBody HorseDTO horseDTO){
-        return horseService.saveHorse(horseDTO);
+        return horseService.updateHorse(horseDTO);
     }
     @DeleteMapping("/{id}")
     public void deleteHorseWithId(@PathVariable long id){
@@ -39,7 +41,7 @@ public class HorseController {
     // ***************************************************************************************
     // customized methods
     @PostMapping("/add-parent")
-    public HorseDTO addParentToChildHorse(@RequestParam("childId") long childId,
+    public int addParentToChildHorse(@RequestParam("childId") long childId,
                                        @RequestParam("parentId") long parentId){
         return horseService.addParentToHorse(childId, parentId);
     }
@@ -52,6 +54,13 @@ public class HorseController {
     public List<HorseDTO> getChildrenOfHorse(@PathVariable long id){
         return horseService.findChildrenOfHorse(id);
     }
-
+    @GetMapping("/{id}/parents")
+    public List<HorseDTO> getParentsOfHorse(@PathVariable long id){
+        return horseService.findParentsOfHorse(id);
+    }
+    @GetMapping("/{id}/doctor-in-charge")
+    public DoctorDTO getDoctorResponsible(@PathVariable long id){
+        return horseService.findDoctorResponsible(id);
+    }
 
 }
