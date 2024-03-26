@@ -15,8 +15,6 @@ public class DoctorMapper {
                 .id(doctorDTO.getId())
                 .firstName(doctorDTO.getFirstName())
                 .lastName(doctorDTO.getLastName())
-//                .managedHorses(doctorDTO.getManagedHorses() != null ? doctorDTO.getManagedHorses().stream()
-//                        .map(horseDTO -> mapToHorse(horseDTO)).collect(Collectors.toList()): null)
                 .salary(doctorDTO.getSalary())
                 .specialization(doctorDTO.getSpecialization())
                 .build();
@@ -27,10 +25,10 @@ public class DoctorMapper {
                 .id(doctor.getId())
                 .firstName(doctor.getFirstName())
                 .lastName(doctor.getLastName())
-//                .managedHorses(doctor.getManagedHorses() != null ? doctor.getManagedHorses().stream()
-//                        .map(horse -> mapToHorseDTO(horse)).collect(Collectors.toList()): null)
                 .salary(doctor.getSalary())
                 .specialization(doctor.getSpecialization())
+//                .managedHorses(doctor.getManagedHorses() != null ? doctor.getManagedHorses().stream()
+//                        .map(horse -> mapToHorseDTO(horse)).collect(Collectors.toList()) : null)
                 .build();
         return doctorDTO;
     }

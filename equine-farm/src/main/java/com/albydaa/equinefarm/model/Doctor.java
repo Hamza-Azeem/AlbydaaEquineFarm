@@ -31,9 +31,11 @@ public class Doctor extends BaseEntity {
             CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.LAZY)
     @Column(name = "managed_horses")
     @JsonIgnore
-    private List<Horse> managedHorses = new ArrayList<>();
+    private Set<Horse> managedHorses;
 
     public void addHorse(Horse horse){
+        if(managedHorses == null)
+            managedHorses = new HashSet<>();
         managedHorses.add(horse);
     }
 

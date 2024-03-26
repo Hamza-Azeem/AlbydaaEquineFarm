@@ -3,6 +3,8 @@ package com.albydaa.equinefarm.service.impl;
 import com.albydaa.equinefarm.base.BaseServiceImpl;
 import com.albydaa.equinefarm.dtos.DoctorDTO;
 import com.albydaa.equinefarm.dtos.HorseDTO;
+import com.albydaa.equinefarm.exception.InvalidInputException;
+import com.albydaa.equinefarm.exception.RecordNotFoundException;
 import com.albydaa.equinefarm.model.Doctor;
 import com.albydaa.equinefarm.model.Horse;
 import com.albydaa.equinefarm.repository.HorseRepo;
@@ -11,6 +13,7 @@ import com.albydaa.equinefarm.service.HorseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,18 +32,19 @@ public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseSer
 
     @Override
     public List<HorseDTO> findChildrenOfHorse(long id) {
-        List<Horse> horses = horseRepo.findChildrenByParentsId(id);
-        if(horses != null){
-            return horses.stream().map(horse -> mapToHorseDTO(horse)).collect(Collectors.toList());
+        Horse horse = findObjectById(id, "horse");
+        if(horse.getChildren() != null){
+            return horse.getChildren().stream().map(h -> mapToHorseDTO(h)).collect(Collectors.toList());
         }
+
         return null;
     }
 
     @Override
     public List<HorseDTO> findParentsOfHorse(long id) {
-        List<Horse> horses = horseRepo.findParentsByChildrenId(id);
-        if (horses != null){
-            return horses.stream().map(h -> mapToHorseDTO(h)).collect(Collectors.toList());
+        Horse horse = findObjectById(id, "horse");
+        if (horse.getParents() != null){
+            return horse.getParents().stream().map(h -> mapToHorseDTO(h)).collect(Collectors.toList());
         }
         return null;
     }
@@ -49,7 +53,7 @@ public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseSer
     public DoctorDTO findDoctorResponsible(long id) {
         Optional<Horse> optionalHorse = horseRepo.findById(id);
         if(optionalHorse.isEmpty())
-            return null; // handle
+            throw  new RecordNotFoundException("No horse record with id=%s was found!".formatted(id));
         Horse horse = optionalHorse.get();
         return horse.getDoctorInCharge() != null ? mapToDoctorDTO(horse.getDoctorInCharge()) : null;
     }
@@ -58,7 +62,7 @@ public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseSer
     public HorseDTO findHorseById(long id){
         Optional<Horse> optionalHorse = horseRepo.findById(id);
         if(optionalHorse.isEmpty()){
-            return null; // handle later when adding exception handling
+            throw  new RecordNotFoundException("No horse record with id=%s was found!".formatted(id));
         }
         Horse horse = optionalHorse.get();
         HorseDTO horseDTO = mapToHorseDTO(horse);
@@ -71,12 +75,15 @@ public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseSer
         if(horses != null){
             return horses.stream().map(horse -> mapToHorseDTO(horse)).collect(Collectors.toList());
         }
-        return null; // handle later.
+        return null;
     }
 
     @Override
     public HorseDTO saveHorse(HorseDTO horseDTO) {
         Horse horse = mapToHorse(horseDTO);
+        if(horse.getId() != null){
+            throw new InvalidInputException("Invalid use of the save method. Try update method?");
+        }
         horseRepo.save(horse);
         horseDTO.setId(horse.getId());
         return horseDTO;
@@ -84,7 +91,12 @@ public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseSer
 
     @Override
     public HorseDTO updateHorse(HorseDTO horseDTO) {
-        // handle if horse doesn't exist in database.
+        if(horseDTO.getId() == null){
+            throw new InvalidInputException("Invalid use of the update method. Try save method?");
+        }
+        else if(horseRepo.findById(horseDTO.getId()).isEmpty()){
+            throw new InvalidInputException("No horse record was found with id=%s".formatted(horseDTO.getId()));
+        }
         Horse horse = mapToHorse(horseDTO);
         horseRepo.save(horse);
         horseDTO = mapToHorseDTO(horse);
@@ -97,15 +109,15 @@ public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseSer
     public HorseDTO giveResponsibilityToDoctor(long doctorId, long horseId) {
         Optional<Horse> horseOptional = horseRepo.findById(horseId);
         if(horseOptional.isEmpty()){
-            return null; // handle later
+            throw  new RecordNotFoundException("No horse record with id=%s was found!".formatted(horseId));
         }
         Horse horse = horseOptional.get();
-        Doctor doctor = doctorService.findObjectById(doctorId);
+        Doctor doctor = doctorService.findObjectById(doctorId, "doctor");
         horse.setDoctorInCharge(doctor);
         saveObject(horse);
         doctor.addHorse(horse);
         doctorService.saveObject(doctor);
-        HorseDTO horseDTO = mapToHorseDTO(horse);;
+        HorseDTO horseDTO = mapToHorseDTO(horse);
         return horseDTO;
     }
 
@@ -114,15 +126,15 @@ public class HorseServiceImpl extends BaseServiceImpl<Horse> implements HorseSer
         if(childId == parentId){
             return 0;
         }
-        Horse parent = horseRepo.findById(parentId).get();
-        Horse child = horseRepo.findById(childId).get();
+        Horse parent = findObjectById(parentId, "horse(parent)");
+        Horse child = findObjectById(childId, "horse(child)");
         if(child.getChildren().contains(parent)){
-            return 0;
+            throw new InvalidInputException("Invalid relation between child and parent!");
         }
         Set<Horse> parents = child.getParents();
-        if(parents.size() < 2){
-            return horseRepo.addParentToHorse(childId, parentId);
+        if(parents.size() >= 2){
+            throw new InvalidInputException("Child already has two parents!");
         }
-        return 0;
+        return horseRepo.addParentToHorse(childId, parentId);
     }
 }

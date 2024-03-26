@@ -1,6 +1,7 @@
 package com.albydaa.equinefarm.base;
 
 
+import com.albydaa.equinefarm.exception.RecordNotFoundException;
 import jakarta.persistence.MappedSuperclass;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,10 +14,10 @@ public class BaseServiceImpl<T> implements BaseService<T> {
     private BaseRepo<T> baseRepo;
 
     @Override
-    public T findObjectById(long id) {
+    public T findObjectById(long id, String className) {
         Optional<T> optionalT = baseRepo.findById(id);
-        if(optionalT.isEmpty()){
-            return null; // Handle it when adding exception handling
+        if(optionalT.isEmpty() || optionalT == null){
+            throw new RecordNotFoundException("No %s record was found with id=%s!".formatted(className, id));
         }
         return optionalT.get();
     }

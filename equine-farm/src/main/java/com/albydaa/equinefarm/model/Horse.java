@@ -28,15 +28,15 @@ public class Horse extends BaseEntity {
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "child_parent",
-    joinColumns = @JoinColumn(name = "child_id"),
-            inverseJoinColumns = @JoinColumn(name = "parent_id")
+    joinColumns = @JoinColumn(name = "parent_id"),
+            inverseJoinColumns = @JoinColumn(name = "child_id")
     )
     private Set<Horse> children;
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "child_parent",
-            joinColumns = @JoinColumn(name = "parent_id"),
-            inverseJoinColumns = @JoinColumn(name = "child_id")
+            joinColumns = @JoinColumn(name = "child_id"),
+            inverseJoinColumns = @JoinColumn(name = "parent_id")
     )
     private Set<Horse> parents;
 
