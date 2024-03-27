@@ -13,10 +13,11 @@ import java.util.List;
 
 @Repository
 public interface HorseRepo extends BaseRepo<Horse> {
-    
-
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO child_parent (child_id, parent_id) VALUES(:childId, :parentId)", nativeQuery = true)
+    @Query(value = "INSERT " +
+            "INTO child_parent (child_id, parent_id)" +
+            " VALUES(:childId, :parentId)",
+            nativeQuery = true)
     public int addParentToHorse(long childId, long parentId);
 }
