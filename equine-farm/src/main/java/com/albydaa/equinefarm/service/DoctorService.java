@@ -7,6 +7,7 @@ import com.albydaa.equinefarm.model.Doctor;
 import com.albydaa.equinefarm.model.Doctor.Specialization;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DoctorService extends BaseService<Doctor> {
     List<HorseDTO> findAllHorsesManagedByDoctor(long doctorId);

@@ -7,12 +7,16 @@ import com.albydaa.equinefarm.exception.InvalidInputException;
 import com.albydaa.equinefarm.exception.RecordNotFoundException;
 import com.albydaa.equinefarm.model.Doctor;
 import com.albydaa.equinefarm.model.Doctor.Specialization;
+import com.albydaa.equinefarm.model.Horse;
 import com.albydaa.equinefarm.repository.DoctorRepo;
 import com.albydaa.equinefarm.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.albydaa.equinefarm.mapper.DoctorMapper.mapToDoctor;
@@ -30,14 +34,18 @@ public class DoctorServiceImpl extends BaseServiceImpl<Doctor> implements Doctor
             return doctors.stream().map(doctor -> mapToDoctorDTO(doctor))
                     .collect(Collectors.toList());
         }
-        return null;
+        return Collections.emptyList();
     }
     @Override
     public List<HorseDTO> findAllHorsesManagedByDoctor(long doctorId) {
         Doctor doctor = repo.findById(doctorId).get();
-        List<HorseDTO> horseDTOS = doctor.getManagedHorses().stream().map( // check if doctor has no horses
+        if(doctor.getManagedHorses() == null){
+            return Collections.emptyList();
+        }
+        List<HorseDTO> horseDTOS = doctor.getManagedHorses().stream().map(
                 horse -> mapToHorseDTO(horse)
         ).collect(Collectors.toList());
+
         return horseDTOS;
     }
 
@@ -66,10 +74,8 @@ public class DoctorServiceImpl extends BaseServiceImpl<Doctor> implements Doctor
         if(doctorDTO.getId() != null){
             throw new InvalidInputException("Invalid use of the save method. Try update method?");
         }
-        Doctor doctor = mapToDoctor(doctorDTO);
-        repo.save(doctor);
-        doctorDTO.setId(doctor.getId());
-        return doctorDTO;
+        Doctor doctor = repo.save(mapToDoctor(doctorDTO));
+        return mapToDoctorDTO(doctor);
     }
 
     @Override
@@ -80,10 +86,8 @@ public class DoctorServiceImpl extends BaseServiceImpl<Doctor> implements Doctor
         else if(repo.findById(doctorDTO.getId()).isEmpty()){
             throw new InvalidInputException("No doctor record was found with id=%s".formatted(doctorDTO.getId()));
         }
-        Doctor doctor = mapToDoctor(doctorDTO);
-        repo.save(doctor);
-        doctorDTO = mapToDoctorDTO(doctor);
-        return doctorDTO;
+        Doctor doctor = repo.save(mapToDoctor(doctorDTO));
+        return mapToDoctorDTO(doctor);
     }
 
 
